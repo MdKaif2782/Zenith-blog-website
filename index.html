@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blog Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap'); /* Discord theme colors */
+        :root {
+            --discord-primary: #7289DA;
+            --discord-secondary: #2C2F33;
+            --discord-tertiary: #23272A;
+            --discord-accent: #F9AA33;
+        }
+        /* Discord font */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--discord-tertiary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 48px;
+            text-align: center;
+            margin-top: -10px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .option {
+            background-color: var(--discord-secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 2px 2px var(--discord-primary);
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        img {
+            width: 150px;
+        }
+        a {
+            text-decoration: none;
+        }
+        .option:hover {
+            background-color: var(--discord-primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="options">
+    <img src="https://i.ibb.co/SyBdwwq/zennnnlogo2.png" alt="Zenith ITAC logo"/>
+    <h1>Zenith ITAC</h1>
+    <a class="option" id="post-blog" href="blog_post.html">Post a Blog</a>
+    <a class="option" id="delete-blog" href="remove_post.html" >Delete a Blog</a>
+</div>
+</body>
+</html>

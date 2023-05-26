@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Remove Post</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap'); /* Discord theme colors */
+    body {
+      background-color: #36393F;
+      color: #FFFFFF;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+      font-family: 'Quicksand', sans-serif;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 40px;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      font-family: 'Quicksand', sans-serif;
+      width: 60%;
+      margin-bottom: 20px;
+    }
+
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #7289DA;
+      border-radius: 5px;
+      color: #FFFFFF;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Remove Post</h1>
+  <form action="#">
+    <label>
+      <input type="text" id="post_link" placeholder="Enter post link">
+    </label>
+    <input type="submit" id="remove_btn" value="Remove">
+  </form>
+</div>
+</body>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
+  import { getFirestore, deleteDoc,doc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgHVvtcUq2yxj_79duexZIEp_TirZ3SDU",
+    authDomain: "zenith-quiz-app.firebaseapp.com",
+    projectId: "zenith-quiz-app",
+    storageBucket: "zenith-quiz-app.appspot.com",
+    messagingSenderId: "669328938373",
+    appId: "1:669328938373:web:0533a3bd955bfef78a60ec",
+    measurementId: "G-SNBTJ7NWML"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+
+
+  const removeBlog = async (docId)=>{
+    await deleteDoc(doc(db,'blogs',docId)).then(res=>{
+      if (res){
+        alert("Blog has been deleted")
+      }else {
+        alert("Error")
+      }
+    });
+  }
+
+  const button = document.getElementById("remove_btn")
+  button.addEventListener('click',async (event)=>{
+    let postLink = document.getElementById("post_link").value;
+    let array = postLink.split("/");
+    let docId = array[array.length-1];
+    await removeBlog(docId);
+  })
+
+</script>
+</html>
+
+

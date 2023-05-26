@@ -1,0 +1,230 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap'); /* Discord theme colors */
+    form {
+      background-color: #36393F;
+      padding: 20px;
+      border-radius: 10px;
+      color: #FFFFFF;
+    }
+  
+    label, input[type="submit"] {
+      font-family: 'Quicksand', sans-serif;
+      margin-top: 7px;
+      font-size: 16px;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    input[type="text"], textarea {
+      background-color: #2F3136;
+      border: none;
+      border-radius: 5px;
+      color: #FFFFFF;
+      padding: 10px;
+      width: 100%;
+        font-family: 'Quicksand', sans-serif;
+      box-sizing: border-box;
+    }
+  
+    input[type="submit"] {
+      background-color: #7289DA;
+      border: none;
+      border-radius: 5px;
+      color: #FFFFFF;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+        font-family: 'Quicksand', sans-serif;
+    }
+  
+    input[type="submit"]:hover {
+      background-color: #677BC4;
+    }
+    
+    input[type="file"] {
+    background-color: #7289DA;
+    color: white;
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+    .tag {
+      background-color: #7289DA;
+      border-radius: 10px;
+      padding: 5px 10px;
+      margin: 10px 5px 5px 0;
+      display: inline-block;
+        font-family: 'Quicksand', sans-serif;
+      color: #FFFFFF;
+      cursor: pointer;
+    }
+  </style>
+  
+  <body style="background-color: #36393F;">
+    <form action="#">
+        <div class="form-group">
+          <label for="post-title">Post Title:</label>
+          <input type="text" id="post-title" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="post-content">Post Content:</label>
+          <textarea id="post-content" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="tags">Tags:</label>
+          <input type="text" id="tags" class="form-control">
+          <div id="tag-container"></div>
+        </div>
+        <div class="form-group">
+          <label for="image-picker">Select an Image:</label>
+          <input type="file" id="image-picker" class="form-control">
+        </div>
+        <input type="submit" id="submit_btn"></input>
+      </form>
+  </body>
+
+
+  
+  <script >
+    
+
+    
+  
+    
+  </script>
+
+
+
+
+
+  <script type="module">
+     // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analSytics.js";
+    import { getFirestore, addDoc, collection, Timestamp, getDocs,doc, setDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgHVvtcUq2yxj_79duexZIEp_TirZ3SDU",
+      authDomain: "zenith-quiz-app.firebaseapp.com",
+      projectId: "zenith-quiz-app",
+      storageBucket: "zenith-quiz-app.appspot.com",
+      messagingSenderId: "669328938373",
+      appId: "1:669328938373:web:0533a3bd955bfef78a60ec",
+      measurementId: "G-SNBTJ7NWML"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const tagsInput = document.querySelector("#tags");
+    const tagContainer = document.querySelector("#tag-container");
+    const imagePicker = document.querySelector("#image-picker");
+    let image;
+    let url='';
+    let TagsArray=[];
+
+
+    // Tag update function
+    tagsInput.addEventListener("keyup", (event) => {
+      if (event.key === " ") {
+        const tag = document.createElement("div");
+        tag.classList.add("tag");
+        tag.innerText = tagsInput.value.trim();
+        TagsArray.push(tagsInput.value.trim());
+
+        tag.addEventListener("click", (event) => {
+          tag.remove();
+        });
+        tagContainer.appendChild(tag);
+        tagsInput.value = "";
+      }
+    });
+
+
+
+    // Post Function
+       const post = async ()=>{
+        let title = document.getElementById("post-title").value
+        let des = document.getElementById("post-content").value
+        let date = new Date();
+        let timestamp = Timestamp.fromDate(date);
+        let epoch = Math.floor(Date.now()/1000);
+        const docRef = await addDoc(collection(db, "blogs"), {
+            content:des,
+            title: title,
+            date: timestamp,
+            epoch: epoch,
+            image: url,
+            tags: TagsArray
+        });
+        await console.log("Document written with ID: ", docRef.id);
+        await location.reload();
+    }
+
+    // Image upload Base64 conversion
+    const uploadImage = async (image) => {
+    const reader = await new FileReader();
+    const blob = await new Blob([image], { type: image.type });
+    await reader.readAsDataURL(blob);
+    
+    //Image upload ImgBB upload
+    reader.onload = async () =>{
+    const formData = await new FormData();
+    await formData.append("image", reader.result.split(",")[1]);
+    
+    try {
+      const response = await fetch("https://api.imgbb.com/1/upload?key=9bd26fca62d9cb1bd23213d83e870c20", {
+        method: "POST",
+        headers: {
+          "Accept": "multipart/form-data"
+        },
+        body: formData
+      });
+      const data = await response.json();
+      url = data.data.url
+      console.log(data)
+      console.log(url)
+      let title = document.getElementById("post-title").value
+      let des = document.getElementById("post-content").value
+
+      if(title!==undefined && des!==undefined){
+        await post();
+      }
+
+    } catch (error) {
+      console.error(error);
+    }
+    }
+  };
+
+
+  // image picker function
+  imagePicker.addEventListener("change", async (event) => {
+    image = event.target.files[0];
+  });
+
+
+  const submit_btn = document.getElementById("submit_btn")
+    
+    submit_btn.addEventListener("click",async (event)=>{
+        await uploadImage(image);
+        console.log("submit clicked");
+        console.log(TagsArray);
+    });
+
+  </script>
+
+ 
+
+
+
+  
+
+
+  
